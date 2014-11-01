@@ -4,7 +4,7 @@ import org.lwjgl.Sys;
 
 //A utility class used to compute the time between frames (called delta-time) in milliseconds
 //and the FPS
-public class OpenGLTimer {
+public class LWJGLTimer {
 	
 	private long lastTime = getTime(), lastFrame;
 	private int frames, fps = getFPS();

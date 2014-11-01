@@ -1,5 +1,7 @@
 package engine_v01.assets;
 
+import org.lwjgl.opengl.GL11;
+
 //This is a utility class which includes many basic and some more complex vector maths.
 // Used in other utility classes as well as the entity system.
 public class Vector2D {
@@ -75,6 +77,11 @@ public class Vector2D {
 	
 	public float overlap(Vector2D b) {
 		return Math.min(y, b.y) - Math.max(x, b.x);
+	}
+	
+	//Plug-in for OpenGL which allows the user to define vertex coordinates using a Vector2D
+	public void glVertex() {
+		GL11.glVertex2f(x, y);
 	}
 
 }

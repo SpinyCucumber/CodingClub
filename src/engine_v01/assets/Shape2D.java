@@ -47,7 +47,7 @@ public class Shape2D {
 	}
 	
 	//Get the axes for testing by normalizing the vectors perpendicular the the edges
-	public Vector2D[] getAxes() {
+	public Vector2D[] axes() {
 		Vector2D[] axes = new Vector2D[vertices.length];
 		for(int i = 0; i < vertices.length; i++) {
 			Vector2D p1 = vertices[i];
@@ -75,12 +75,12 @@ public class Shape2D {
 	//of the overlaps of the shadows of the shapes when projected onto their individual
 	//axes do not overlap, then the shapes are not colliding. This algorithm works well
 	//because it test collisions between any kind of shape, as long as the shape is not convex
-	public CollisionResult isColliding(Shape2D b) {
+	public CollisionResult checkCollision(Shape2D b) {
 		//How large the overlap is between the two closest sides (Set to a really high value)
 		float overlap = Float.MAX_VALUE;
 		//Define our variables
 		Vector2D smallest = null, c = new Vector2D();
-		Vector2D[] axes1 = getAxes(), axes2 = b.getAxes();
+		Vector2D[] axes1 = axes(), axes2 = b.axes();
 		//Iterate over axes for each shape
 		for (int i = 0; i < axes1.length; i++) {
 			//Get the shadows of each shape when projected onto the axis
