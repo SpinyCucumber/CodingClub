@@ -1,3 +1,5 @@
+Coding Club Collaborative Project, 2014
+
 Hello!
 As you can most plainly see, I have started a GitHub repository so that we can share our ideas
 and work most easily. If you don't already know how to use GitHub, I highly recommend you begin
