@@ -12,16 +12,20 @@ import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
 import org.newdawn.slick.util.ResourceLoader;
 
+import engine_v01.assets.EntityController2D;
+import engine_v01.assets.EntityDrawer2D;
 import engine_v01.assets.LWJGLTimer;
 import engine_v01.assets.Rectangle;
 import engine_v01.assets.Vector2D;
 import engine_v01.assets.World2D;
+import engine_v01.assets.World2D.EntityInterface;
 
 //The game will be initialized from this class. The initialization/bootup process will
 //include creating the world, starting the timer, loading resources, initializing OpenGL, etc.
 public class Game {
 	
 	public static void main(String[] args) {
+		
 		
 		initGL(800, 600);
 		
@@ -36,17 +40,21 @@ public class Game {
 		
 		//Create timer and world
 		LWJGLTimer timer = new LWJGLTimer();
-		World2D world = new World2D(new Vector2D(), 0.99f);
+		World2D world = new World2D(new Vector2D(0, 0.1f), 0.95f);
+		EntityInterface drawer = new EntityDrawer2D(texture.getTextureID());
 		world.new Entity2D(new Rectangle(new Vector2D(400, 300), new Vector2D(60, 60)),
-				new Vector2D(), 0, texture.getTextureID());
+				new Vector2D(0, 0), 0, true, drawer, new EntityController2D(0.1f));
+		world.new Entity2D(new Rectangle(new Vector2D(400, 590), new Vector2D(400, 10)),
+				new Vector2D(0, 0), 0, false, drawer);
+		world.new Entity2D(new Rectangle(new Vector2D(400, 10), new Vector2D(400, 10)),
+				new Vector2D(0, 0), 0, false, drawer);
 		
 		//Enter main loop
 		while(!Display.isCloseRequested()) {
 			
-			world.update(timer.delta());
-			
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-			world.draw();
+			
+			world.update(timer.delta());
 			
 			Display.update();
             Display.sync(60);

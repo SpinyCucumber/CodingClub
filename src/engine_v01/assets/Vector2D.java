@@ -4,7 +4,7 @@ import org.lwjgl.opengl.GL11;
 
 //This is a utility class which includes many basic and some more complex vector maths.
 // Used in other utility classes as well as the entity system.
-public class Vector2D {
+public class Vector2D implements Cloneable {
 
 	public float x, y;
 	
@@ -12,9 +12,6 @@ public class Vector2D {
 		this.x = x;
 		this.y = y;
 	}
-	
-	//Convenience constructor used when a vector does not need any values assigned
-	public Vector2D() {}
 	
 	//Derive a vector from an angle using sine/cosine functions
 	public static Vector2D fromAngle(float a) {
@@ -34,14 +31,26 @@ public class Vector2D {
 		return new Vector2D(crossProduct(b), dotProduct(b));
 	}
 	
+	public Vector2D midpoint(Vector2D b) {
+		return new Vector2D((x + b.x) / 2, (y + b.y) / 2);
+	}
+	
 	//Scale the vector using a scalar
-	public Vector2D product(float s) {
+	public Vector2D scale(float s) {
 		return new Vector2D(x * s, y * s);
+	}
+	
+	public Vector2D divide(float s) {
+		return new Vector2D(x / s, y / s);
 	}
 	
 	//Find the vector perpendicular to itself, using the formula -y / x
 	public Vector2D perpendicular() {
 		return new Vector2D(-y, x);
+	}
+	
+	public Vector2D reflection() {
+		return new Vector2D(-x, y);
 	}
 	
 	//Reverse the vector's direction
@@ -65,6 +74,10 @@ public class Vector2D {
 		return x * b.y - y * b.x;
 	}
 	
+	public Vector2D cross(float scalar) {
+		return new Vector2D(y * scalar, x * -scalar);
+	}
+	
 	//Calculate the length using the pythagorean theorem.
 	public float length() {
 		return (float) Math.sqrt(x * x + y * y);
@@ -82,6 +95,16 @@ public class Vector2D {
 	//Plug-in for OpenGL which allows the user to define vertex coordinates using a Vector2D
 	public void glVertex() {
 		GL11.glVertex2f(x, y);
+	}
+	
+	@Override
+	public Vector2D clone() {
+		return new Vector2D(x, y);
+	}
+	
+	@Override
+	public String toString() {
+		return "{" + x + ", " + y + "}";
 	}
 
 }

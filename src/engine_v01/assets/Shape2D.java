@@ -4,35 +4,36 @@ package engine_v01.assets;
 //Utilizes the Vector2D class heavily
 public class Shape2D {
 	
-	//The convenience class used to handle collisions, usually discarded immediately
+	//The wrapper class used to handle collisions, usually discarded immediately
 	public class CollisionResult {
 		
-		public Vector2D mtv, center;
+		public Vector2D normal1, normal2, center;
+		public float depth1, depth2;
 		
-		private CollisionResult(Vector2D mtv, Vector2D center) {
-			this.mtv = mtv;
+		private CollisionResult(Vector2D normal1, Vector2D normal2, float depth1, float depth2, Vector2D center) {
+			this.normal1 = normal1;
+			this.normal2 = normal2;
+			this.depth1 = depth1;
+			this.depth2 = depth2;
 			this.center = center;
 		}
 		
 	}
-	
+
 	public Vector2D[] vertices;
-	public Vector2D center;
 	
-	public Shape2D(Vector2D center, Vector2D...vertices) {
+	public Shape2D(Vector2D...vertices) {
 		this.vertices = vertices;
-		this.center = center;
 	}
 	
 	//Move the shape using a vector
 	public void translate(Vector2D d) {
-		center = center.add(d);
 		for(int i = 0; i < vertices.length; i++) {
 			vertices[i] = vertices[i].add(d);
 		}
 	}
 	
-	public void rotate(float a) {
+	public void rotate(Vector2D center, float a) {
 		//Find the rotational vector
 		Vector2D d = Vector2D.fromAngle(a);
 		//Iterate over vertices
@@ -44,6 +45,18 @@ public class Shape2D {
 			//Translate the vector back
 			vertices[i] = center.add(r);
 		}
+	}
+	
+	public Vector2D center() {
+		Vector2D min = vertices[0].clone(), max = vertices[0].clone();
+		for(int i = 1; i < vertices.length; i++) {
+			Vector2D vertex = vertices[i];
+			if(vertex.x < min.x) min.x = vertex.x;
+			if(vertex.y < min.y) min.y = vertex.y;
+			if(vertex.x > max.x) max.x = vertex.x;
+			if(vertex.y > max.y) max.y = vertex.y;
+		}
+		return min.midpoint(max);
 	}
 	
 	//Get the axes for testing by normalizing the vectors perpendicular the the edges
@@ -70,46 +83,51 @@ public class Shape2D {
 		Vector2D projection = new Vector2D(min, max);
 		return projection;
 	}
-	
+
 	//Test for collisions using the Seperating-Axis Theorem. The theorem states that if all
 	//of the overlaps of the shadows of the shapes when projected onto their individual
 	//axes do not overlap, then the shapes are not colliding. This algorithm works well
 	//because it test collisions between any kind of shape, as long as the shape is not convex
 	public CollisionResult checkCollision(Shape2D b) {
-		//How large the overlap is between the two closest sides (Set to a really high value)
-		float overlap = Float.MAX_VALUE;
-		//Define our variables
-		Vector2D smallest = null, c = new Vector2D();
+		
+		float depth1 = 1000, depth2 = 1000;
+		
+		Vector2D normal1 = null, normal2 = null, center1 = new Vector2D(0, 0), center2 = new Vector2D(0, 0);
 		Vector2D[] axes1 = axes(), axes2 = b.axes();
-		//Iterate over axes for each shape
-		for (int i = 0; i < axes1.length; i++) {
-			//Get the shadows of each shape when projected onto the axis
-			Vector2D axis = axes1[i], p1 = project(axis), p2 = b.project(axis);
-			//Find the overlap of the shadows
+		
+		for(Vector2D axis : axes1) {
+			
+			Vector2D p1 = project(axis), p2 = b.project(axis);
 			float ol = p1.overlap(p2);
-			//Perform final computations
+			
 			if (ol < 0) return null;
-			c = c.add(axis.product(p2.x + ol / 4));
-			if(ol < overlap) {
-				overlap = ol;
-				smallest = axis;
+			center1 = center1.add(axis.scale(p1.x + ol / 2));
+			if(ol < depth1) {
+				depth1 = ol;
+				normal1 = axis;
 			}
+			
 		}
-		for (int i = 0; i < axes2.length; i++) {
-			Vector2D axis = axes2[i], p1 = project(axis), p2 = b.project(axis);
+		
+		for(Vector2D axis : axes2) {
+			
+			Vector2D p1 = project(axis), p2 = b.project(axis);
 			float ol = p1.overlap(p2);
+			
 			if (ol < 0) return null;
-			c = c.add(axis.product(p2.x + ol / 4));
-			if(ol < overlap) {
-				overlap = ol;
-				smallest = axis;
+			center2 = center2.add(axis.scale(p1.x + ol / 2));
+			if(ol < depth2) {
+				depth2 = ol;
+				normal2 = axis;
 			}
+			
 		}
-		//Compensate for any axis ambiguity
-		Vector2D d = b.center.subtract(center);
-		if(smallest.dotProduct(d) > 0) smallest = smallest.negate();
-		//Return collision result
-		return new CollisionResult(smallest.product(overlap), c);
+		
+		Vector2D d = b.center().subtract(this.center());
+		if(normal1.dotProduct(d) > 0) normal1 = normal1.negate();
+		if(normal2.dotProduct(d) > 0) normal2 = normal2.negate();
+
+		return new CollisionResult(normal1, normal2, depth1, depth2, center1.midpoint(center2));
 	}
 
 	@Override

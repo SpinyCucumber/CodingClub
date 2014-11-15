@@ -5,7 +5,7 @@ package engine_v01.assets;
 public class Rectangle extends Shape2D {
 
 	public Rectangle(Vector2D c, Vector2D hd) {
-		super(c, corners(c, hd));
+		super(corners(c, hd));
 	}
 	
 	@Override
@@ -22,7 +22,7 @@ public class Rectangle extends Shape2D {
 	}
 	
 	private static Vector2D[] corners(Vector2D c, Vector2D hd) {
-		Vector2D p = hd.perpendicular();
+		Vector2D p = hd.reflection();
 		return new Vector2D[]{c.subtract(hd), c.subtract(p), c.add(hd), c.add(p)};
 	}
 
