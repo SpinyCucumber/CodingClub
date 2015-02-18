@@ -6,5 +6,6 @@ public enum BossBadEnum {
 	TIAMAT,
 	JORMUNGANDR,
 	EXCALIBUR,
+	TIBURIUS_JENS;
 
 }
