@@ -2,55 +2,53 @@ package engine_v01.assets;
 
 //A more complex geometrical class, usually used detect collisions, but has many applications
 //Utilizes the Vector2D class heavily
-public class Shape2D {
+public class Shape {
 	
 	//The wrapper class used to handle collisions, usually discarded immediately
 	public class CollisionResult {
 		
-		public Vector2D normal1, normal2, center;
-		public float depth1, depth2;
+		public Vec2 normal, center;
+		public float depth;
 		
-		private CollisionResult(Vector2D normal1, Vector2D normal2, float depth1, float depth2, Vector2D center) {
-			this.normal1 = normal1;
-			this.normal2 = normal2;
-			this.depth1 = depth1;
-			this.depth2 = depth2;
+		private CollisionResult(Vec2 normal, float depth, Vec2 center) {
+			this.normal = normal;
+			this.depth = depth;
 			this.center = center;
 		}
 		
 	}
 
-	public Vector2D[] vertices;
+	public Vec2[] vertices;
 	
-	public Shape2D(Vector2D...vertices) {
+	public Shape(Vec2...vertices) {
 		this.vertices = vertices;
 	}
 	
 	//Move the shape using a vector
-	public void translate(Vector2D d) {
+	public void translate(Vec2 d) {
 		for(int i = 0; i < vertices.length; i++) {
 			vertices[i] = vertices[i].add(d);
 		}
 	}
 	
-	public void rotate(Vector2D center, float a) {
+	public void rotate(Vec2 center, float a) {
 		//Find the rotational vector
-		Vector2D d = Vector2D.fromAngle(a);
+		Vec2 d = Vec2.fromAngle(a);
 		//Iterate over vertices
 		for(int i = 0; i < vertices.length; i++) {
 			//Translate vertex to origin
-			Vector2D p = vertices[i].subtract(center);
+			Vec2 p = vertices[i].subtract(center);
 			//Rotate the vertex (Refer to Vector2D class)
-			Vector2D r = p.rotate(d);
+			Vec2 r = p.rotate(d);
 			//Translate the vector back
 			vertices[i] = center.add(r);
 		}
 	}
 	
-	public Vector2D center() {
-		Vector2D min = vertices[0].clone(), max = vertices[0].clone();
+	public Vec2 center() {
+		Vec2 min = vertices[0].clone(), max = vertices[0].clone();
 		for(int i = 1; i < vertices.length; i++) {
-			Vector2D vertex = vertices[i];
+			Vec2 vertex = vertices[i];
 			if(vertex.x < min.x) min.x = vertex.x;
 			if(vertex.y < min.y) min.y = vertex.y;
 			if(vertex.x > max.x) max.x = vertex.x;
@@ -60,27 +58,27 @@ public class Shape2D {
 	}
 	
 	//Get the axes for testing by normalizing the vectors perpendicular the the edges
-	public Vector2D[] axes() {
-		Vector2D[] axes = new Vector2D[vertices.length];
+	public Vec2[] axes() {
+		Vec2[] axes = new Vec2[vertices.length];
 		for(int i = 0; i < vertices.length; i++) {
-			Vector2D p1 = vertices[i];
-			Vector2D p2 = vertices[i + 1 == vertices.length ? 0 : i + 1];
-			Vector2D edge = p1.subtract(p2);
-			Vector2D normal = edge.perpendicular();
+			Vec2 p1 = vertices[i];
+			Vec2 p2 = vertices[i + 1 == vertices.length ? 0 : i + 1];
+			Vec2 edge = p1.subtract(p2);
+			Vec2 normal = edge.perpendicular();
 			axes[i] = normal.normalize();
 		}
 		return axes;
 	}
 	
 	//Project the shape onto a 1-dimensional surface, like creating a shadow
-	public Vector2D project(Vector2D axis) {
+	public Vec2 project(Vec2 axis) {
 		float min = axis.dotProduct(vertices[0]), max = min;
 		for(int i = 1; i < vertices.length; i++) {
 			float p = axis.dotProduct(vertices[i]);
 			if(p < min) min = p;
 			else if(p > max) max = p;
 		}
-		Vector2D projection = new Vector2D(min, max);
+		Vec2 projection = new Vec2(min, max);
 		return projection;
 	}
 
@@ -88,52 +86,51 @@ public class Shape2D {
 	//of the overlaps of the shadows of the shapes when projected onto their individual
 	//axes do not overlap, then the shapes are not colliding. This algorithm works well
 	//because it test collisions between any kind of shape, as long as the shape is not convex
-	public CollisionResult checkCollision(Shape2D b) {
+	public CollisionResult checkCollision(Shape b) {
 		
-		float depth1 = 1000, depth2 = 1000;
+		float depth = 1000;
 		
-		Vector2D normal1 = null, normal2 = null, center1 = new Vector2D(0, 0), center2 = new Vector2D(0, 0);
-		Vector2D[] axes1 = axes(), axes2 = b.axes();
+		Vec2 normal = null, center1 = new Vec2(0, 0), center2 = new Vec2(0, 0);
+		Vec2[] axes1 = axes(), axes2 = b.axes();
 		
-		for(Vector2D axis : axes1) {
+		for(Vec2 axis : axes1) {
 			
-			Vector2D p1 = project(axis), p2 = b.project(axis);
+			Vec2 p1 = project(axis), p2 = b.project(axis);
 			float ol = p1.overlap(p2);
 			
 			if (ol < 0) return null;
 			center1 = center1.add(axis.scale(p1.x + ol / 2));
-			if(ol < depth1) {
-				depth1 = ol;
-				normal1 = axis;
+			if(ol < depth) {
+				depth = ol;
+				normal = axis;
 			}
 			
 		}
 		
-		for(Vector2D axis : axes2) {
+		for(Vec2 axis : axes2) {
 			
-			Vector2D p1 = project(axis), p2 = b.project(axis);
+			Vec2 p1 = project(axis), p2 = b.project(axis);
 			float ol = p1.overlap(p2);
 			
 			if (ol < 0) return null;
 			center2 = center2.add(axis.scale(p1.x + ol / 2));
-			if(ol < depth2) {
-				depth2 = ol;
-				normal2 = axis;
+			if(ol < depth) {
+				depth = ol;
+				normal = axis;
 			}
 			
 		}
 		
-		Vector2D d = b.center().subtract(this.center());
-		if(normal1.dotProduct(d) > 0) normal1 = normal1.negate();
-		if(normal2.dotProduct(d) > 0) normal2 = normal2.negate();
+		Vec2 d = center().subtract(b.center());
+		if(normal.dotProduct(d) > 0) normal = normal.negate();
 
-		return new CollisionResult(normal1, normal2, depth1, depth2, center1.midpoint(center2));
+		return new CollisionResult(normal, depth, center1.midpoint(center2));
 	}
 
 	@Override
 	public String toString() {
 		String s = "{";
-		for(Vector2D v : vertices) {
+		for(Vec2 v : vertices) {
 			s += v.toString() + " ";
 		}
 		return s + "}";

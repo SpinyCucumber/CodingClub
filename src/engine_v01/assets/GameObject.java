@@ -3,9 +3,9 @@ package engine_v01.assets;
 import static org.lwjgl.opengl.GL11.*;
 
 import org.lwjgl.Sys;
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
-import org.lwjgl.opengl.PixelFormat;
 import org.newdawn.slick.opengl.TextureLoader;
 import org.newdawn.slick.util.ResourceLoader;
 
@@ -14,7 +14,7 @@ import org.newdawn.slick.util.ResourceLoader;
 public class GameObject extends Thread {
 	
 	private int width, height, lastTime;
-	private World2D world;
+	private World world;
 	
 	public GameObject(int width, int height) {
 		this.width = width;
@@ -22,7 +22,7 @@ public class GameObject extends Thread {
 	}
 	
 	private int getTime() {
-		return (int) (Sys.getTime() / Sys.getTimerResolution());
+		return (int) (Sys.getTime() * 1000 / Sys.getTimerResolution());
 	}
 	
 	public void start() {
@@ -32,23 +32,17 @@ public class GameObject extends Thread {
 			Display.setTitle("Game");
 			Display.setDisplayMode(new DisplayMode(width, height));
 			Display.setVSyncEnabled(true);
-			Display.create(new PixelFormat(0,0,0,0));        
-        
-			glEnable(GL_BLEND);
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			Display.create();
         
 			glEnable(GL_TEXTURE_2D);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
- 
-			glMatrixMode(GL_PROJECTION);
-			glLoadIdentity();
-			glOrtho(0, width, height, 0, 1, -1);
-			glMatrixMode(GL_MODELVIEW);
+
+			glOrtho(0, width, 0, height, 1, -1);
 		
-			TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/texture/image.png"));
-			world = new World2D(new Vector2D(0, 0), 0.99f);
-			world.new Entity2D(new Rectangle(new Vector2D(50, 50), new Vector2D(10, 10)), new Vector2D(0, 0), true);
+			int t2 = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/texture/image.png")).getTextureID(),
+					t1 = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/texture/Playable/Dragon/Dragon.png")).getTextureID();
+			
+			world = new World(new Vec2(0, -0.01f), 0.01f);
+			world.new Entity(new Rectangle(new Vec2(500, 100), new Vec2(500, 100)), new Vec2(0, 0), t1, 0, 0.1f);
 			
 			lastTime = getTime();
 
@@ -57,9 +51,15 @@ public class GameObject extends Thread {
 				int time = getTime(), delta = time - lastTime;
 				lastTime = time;
 				
+				while(Mouse.next()) {
+					if(!Mouse.getEventButtonState()) continue;
+					world.new Entity(new Rectangle(Vec2.fromMousePosition(), new Vec2(40, 40)), new Vec2(0, 0), t2, 1, 0.1f);
+				}
+				
 				world.update(delta);
 				
 				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+				world.draw();
 			
 				Display.update();
 				Display.sync(60);
