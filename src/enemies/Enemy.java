@@ -1,9 +1,13 @@
 package enemies;
 
-public abstract class Enemy {
+public interface Enemy {
 	
-	void die() {
-		
-	}
+	void setup();
+	void updateState();
+	
+	void attackPrime();
+	void attackSpecial(float power);
+	
+	void die();
 
 }
