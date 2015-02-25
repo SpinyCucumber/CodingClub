@@ -2,8 +2,8 @@ package casses;
 
 public abstract class Classes {
 	
-	abstract void update();
+	public abstract void setup();
 	
-	
+	public abstract void update();
 
 }
