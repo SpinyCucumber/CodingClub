@@ -7,13 +7,12 @@ public class Shape {
 	//The wrapper class used to handle collisions, usually discarded immediately
 	public class CollisionResult {
 		
-		public Vec2 normal, center;
+		public Vec2 normal;
 		public float depth;
 		
-		private CollisionResult(Vec2 normal, float depth, Vec2 center) {
+		private CollisionResult(Vec2 normal, float depth) {
 			this.normal = normal;
 			this.depth = depth;
-			this.center = center;
 		}
 		
 	}
@@ -38,9 +37,7 @@ public class Shape {
 		for(int i = 0; i < vertices.length; i++) {
 			//Translate vertex to origin
 			Vec2 p = vertices[i].subtract(center);
-			//Rotate the vertex (Refer to Vector2D class)
 			Vec2 r = p.rotate(d);
-			//Translate the vector back
 			vertices[i] = center.add(r);
 		}
 	}
@@ -72,9 +69,9 @@ public class Shape {
 	
 	//Project the shape onto a 1-dimensional surface, like creating a shadow
 	public Vec2 project(Vec2 axis) {
-		float min = axis.dotProduct(vertices[0]), max = min;
+		float min = axis.dot(vertices[0]), max = min;
 		for(int i = 1; i < vertices.length; i++) {
-			float p = axis.dotProduct(vertices[i]);
+			float p = axis.dot(vertices[i]);
 			if(p < min) min = p;
 			else if(p > max) max = p;
 		}
@@ -90,7 +87,7 @@ public class Shape {
 		
 		float depth = 1000;
 		
-		Vec2 normal = null, center1 = new Vec2(0, 0), center2 = new Vec2(0, 0);
+		Vec2 normal = null;
 		Vec2[] axes1 = axes(), axes2 = b.axes();
 		
 		for(Vec2 axis : axes1) {
@@ -99,7 +96,6 @@ public class Shape {
 			float ol = p1.overlap(p2);
 			
 			if (ol < 0) return null;
-			center1 = center1.add(axis.scale(p1.x + ol / 2));
 			if(ol < depth) {
 				depth = ol;
 				normal = axis;
@@ -113,7 +109,6 @@ public class Shape {
 			float ol = p1.overlap(p2);
 			
 			if (ol < 0) return null;
-			center2 = center2.add(axis.scale(p1.x + ol / 2));
 			if(ol < depth) {
 				depth = ol;
 				normal = axis;
@@ -122,9 +117,9 @@ public class Shape {
 		}
 		
 		Vec2 d = center().subtract(b.center());
-		if(normal.dotProduct(d) > 0) normal = normal.negate();
+		if(normal.dot(d) > 0) normal = normal.negate();
 
-		return new CollisionResult(normal, depth, center1.midpoint(center2));
+		return new CollisionResult(normal, depth);
 	}
 
 	@Override

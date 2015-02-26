@@ -43,17 +43,19 @@ public class World {
 			entity1.shape.translate(entity1.velocity.scale(delta));
 			entity1.velocity = entity1.velocity.add(gravity.scale(entity1.mass));
 			Vec2 n = entity1.velocity.subtract(entity1.velocity.scale(airDensity));
-			entity1.velocity = n.dotProduct(entity1.velocity) < 0 ? new Vec2(0, 0) : n;
+			entity1.velocity = n.dot(entity1.velocity) < 0 ? new Vec2(0, 0) : n;
 			for(int i2 = i1 + 1; i2 < entities.size(); i2++) {
 				Entity entity2 = entities.get(i2);
 				CollisionResult r = entity1.shape.checkCollision(entity2.shape);
 				if(r == null) continue;
-				float d = entity2.velocity.subtract(entity1.velocity).dotProduct(r.normal);
+				float d = entity2.velocity.subtract(entity1.velocity).dot(r.normal);
 				if(d > 0) continue;
-				float e = Math.min(entity1.rest, entity2.rest), j = -(1 + e) * d / (entity1.i_mass + entity2.i_mass);
-				Vec2 i = r.normal.scale(j);
+				float e = Math.min(entity1.rest, entity2.rest), tm = entity1.i_mass + entity2.i_mass, j = -(1 + e) * d / tm;
+				Vec2 i = r.normal.scale(j), c = r.normal.scale(r.depth / tm);
+				entity1.shape.translate(c.scale(-entity1.i_mass));
+				entity2.shape.translate(c.scale(entity2.i_mass));
 				entity1.velocity = entity1.velocity.subtract(i.scale(entity1.i_mass));
-				entity2.velocity = entity2.velocity.subtract(i.scale(entity2.i_mass));
+				entity2.velocity = entity2.velocity.add(i.scale(entity2.i_mass));
 			}
 		}
 	}

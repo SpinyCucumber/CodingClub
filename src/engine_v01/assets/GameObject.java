@@ -33,7 +33,8 @@ public class GameObject extends Thread {
 			Display.setDisplayMode(new DisplayMode(width, height));
 			Display.setVSyncEnabled(true);
 			Display.create();
-        
+			
+			glClearColor(0.5f, 0.5f, 1, 1);
 			glEnable(GL_TEXTURE_2D);
 
 			glOrtho(0, width, 0, height, 1, -1);
@@ -42,7 +43,7 @@ public class GameObject extends Thread {
 					t1 = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/texture/Playable/Dragon/Dragon.png")).getTextureID();
 			
 			world = new World(new Vec2(0, -0.01f), 0.01f);
-			world.new Entity(new Rectangle(new Vec2(500, 100), new Vec2(500, 100)), new Vec2(0, 0), t1, 0, 0.1f);
+			world.new Entity(new Rectangle(new Vec2(500, 100), new Vec2(500, 100)), new Vec2(0, 0), t1, 0, 0);
 			
 			lastTime = getTime();
 
@@ -53,7 +54,7 @@ public class GameObject extends Thread {
 				
 				while(Mouse.next()) {
 					if(!Mouse.getEventButtonState()) continue;
-					world.new Entity(new Rectangle(Vec2.fromMousePosition(), new Vec2(40, 40)), new Vec2(0, 0), t2, 1, 0.1f);
+					world.new Entity(new Rectangle(Vec2.fromMousePosition(), new Vec2(40, 40)), new Vec2(0, 0), t2, 1, 0.5f);
 				}
 				
 				world.update(delta);

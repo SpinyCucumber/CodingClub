@@ -33,7 +33,7 @@ public class Vec2 implements Cloneable {
 	
 	//Rotate the vector around the origin using dot products and cross products
 	public Vec2 rotate(Vec2 b) {
-		return new Vec2(crossProduct(b), dotProduct(b));
+		return new Vec2(cross(b), dot(b));
 	}
 	
 	public Vec2 midpoint(Vec2 b) {
@@ -41,7 +41,7 @@ public class Vec2 implements Cloneable {
 	}
 	
 	public Vec2 reflect(Vec2 b) {
-		return subtract(b.scale(2 * dotProduct(b)));
+		return subtract(b.scale(2 * dot(b)));
 	}
 	
 	//Scale the vector using a scalar
@@ -74,12 +74,12 @@ public class Vec2 implements Cloneable {
 	}
 	
 	//Get the dot product of two vectors by adding together the product of their x values and y values
-	public float dotProduct(Vec2 b) {
+	public float dot(Vec2 b) {
 		return x * b.x + y * b.y;
 	}
 	
 	//Get the cross product (similar to dot product) by subtracting the cross-products (Think of a fraction)
-	public float crossProduct(Vec2 b) {
+	public float cross(Vec2 b) {
 		return x * b.y - y * b.x;
 	}
 	
