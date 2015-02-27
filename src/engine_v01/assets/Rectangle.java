@@ -4,8 +4,8 @@ package engine_v01.assets;
 //axes. Also contains an convenience constructor which takes the center and the dimensions
 public class Rectangle extends Shape {
 
-	public Rectangle(Vec2 c, Vec2 hd) {
-		super(corners(c, hd));
+	private Rectangle(Vec2...vec2s) {
+		super(vec2s);
 	}
 	
 	@Override
@@ -21,9 +21,13 @@ public class Rectangle extends Shape {
 		return axes;
 	}
 	
-	private static Vec2[] corners(Vec2 c, Vec2 hd) {
+	public static Rectangle fromHalfDimension(Vec2 c, Vec2 hd) {
 		Vec2 p = hd.reflection();
-		return new Vec2[]{c.subtract(hd), c.subtract(p), c.add(hd), c.add(p)};
+		return new Rectangle(c.subtract(hd), c.subtract(p), c.add(hd), c.add(p));
+	}
+	
+	public static Rectangle fromCorners(Vec2 c1, Vec2 c2) {
+		return new Rectangle(c1, new Vec2(c2.x, c1.y), c2, new Vec2(c1.x, c2.y));
 	}
 
 }

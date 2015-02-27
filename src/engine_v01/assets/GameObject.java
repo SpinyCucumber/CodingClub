@@ -2,10 +2,14 @@ package engine_v01.assets;
 
 import static org.lwjgl.opengl.GL11.*;
 
+import java.util.ArrayList;
+
 import org.lwjgl.Sys;
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
+import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
 import org.newdawn.slick.util.ResourceLoader;
 
@@ -13,7 +17,7 @@ import org.newdawn.slick.util.ResourceLoader;
 //include creating the world, starting the timer, loading resources, initializing OpenGL, etc.
 public class GameObject extends Thread {
 	
-	private int width, height, lastTime;
+	private int width, height, time, lastTime;
 	private World world;
 	
 	public GameObject(int width, int height) {
@@ -36,31 +40,64 @@ public class GameObject extends Thread {
 			
 			glClearColor(0.5f, 0.5f, 1, 1);
 			glEnable(GL_TEXTURE_2D);
-
-			glOrtho(0, width, 0, height, 1, -1);
-		
-			int t2 = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/texture/image.png")).getTextureID(),
-					t1 = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/texture/Playable/Dragon/Dragon.png")).getTextureID();
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			
-			world = new World(new Vec2(0, -0.01f), 0.01f);
-			world.new Entity(new Rectangle(new Vec2(500, 100), new Vec2(500, 100)), new Vec2(0, 0), t1, 0, 0);
+			glOrtho(0, width, height, 0, 1, -1);
+		
+			Texture t1 = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/texture/material/foliage1.png")),
+					t2 = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/texture/Playable/Dragon/Dragon.png"));
 			
 			lastTime = getTime();
-
+			world = new World(new Vec2(0, 0.01f), 0.01f);
+			world.new Entity(Rectangle.fromCorners(new Vec2(0, height - 200), new Vec2(width, height)), new Vec2(0, 0), t1, false, 0, 0);
+			ArrayList<Vec2> clickPoints = new ArrayList<Vec2>();
+			
 			while(!Display.isCloseRequested()) {
 				
-				int time = getTime(), delta = time - lastTime;
+				time = getTime();
+				int delta = time - lastTime;
+				
 				lastTime = time;
 				
 				while(Mouse.next()) {
 					if(!Mouse.getEventButtonState()) continue;
-					world.new Entity(new Rectangle(Vec2.fromMousePosition(), new Vec2(40, 40)), new Vec2(0, 0), t2, 1, 0.5f);
+					Vec2 m = new Vec2(Mouse.getX(), height - Mouse.getY());
+					switch(Mouse.getEventButton()) {
+						case 0 : clickPoints.add(m);
+						break;
+						case 1 : world.new Entity(Rectangle.fromHalfDimension(m, new Vec2(50, 50)), new Vec2(0, 0), t2, true, 1, 0.3f);
+						break;
+					}
+				}
+				
+				while(Keyboard.next()) {
+					if(!Keyboard.getEventKeyState()) continue;
+					switch(Keyboard.getEventKey()) {
+						case Keyboard.KEY_SPACE : {
+							if(clickPoints.size() < 3) continue;
+							world.new Entity(new Shape(clickPoints.toArray(new Vec2[clickPoints.size()])), new Vec2(0, 0), t1, false, 0, 0.3f);
+							clickPoints.clear();
+							break;
+						}
+					}
 				}
 				
 				world.update(delta);
 				
 				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 				world.draw();
+				
+				if(clickPoints.size() > 1) {
+					float i = 0.5f + 0.5f * (float) Math.sin(0.003f * time);
+					glDisable(GL_TEXTURE_2D);
+					glColor4f(0, 0, 0, i);
+					glBegin(GL_LINE_LOOP);
+					for(Vec2 v : clickPoints) v.glVertex();
+					glEnd();
+					glColor4f(1, 1, 1, 1);
+					glEnable(GL_TEXTURE_2D);
+				}
 			
 				Display.update();
 				Display.sync(60);

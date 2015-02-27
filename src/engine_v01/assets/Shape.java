@@ -30,28 +30,47 @@ public class Shape {
 		}
 	}
 	
-	public void rotate(Vec2 center, float a) {
-		//Find the rotational vector
+	public Shape rotate(Vec2 center, float a) {
+		Vec2[] newVertices = new Vec2[vertices.length];
 		Vec2 d = Vec2.fromAngle(a);
 		//Iterate over vertices
 		for(int i = 0; i < vertices.length; i++) {
 			//Translate vertex to origin
 			Vec2 p = vertices[i].subtract(center);
 			Vec2 r = p.rotate(d);
-			vertices[i] = center.add(r);
+			newVertices[i] = center.add(r);
 		}
+		return new Shape(newVertices);
 	}
 	
-	public Vec2 center() {
-		Vec2 min = vertices[0].clone(), max = vertices[0].clone();
+	public Vec2 min() {
+		
+		Vec2 min = vertices[0].clone();
 		for(int i = 1; i < vertices.length; i++) {
 			Vec2 vertex = vertices[i];
 			if(vertex.x < min.x) min.x = vertex.x;
 			if(vertex.y < min.y) min.y = vertex.y;
+		}
+		return min;
+		
+	}
+	
+	public Vec2 max() {
+		
+		Vec2 max = vertices[0].clone();
+		
+		for(int i = 1; i < vertices.length; i++) {
+			Vec2 vertex = vertices[i];
 			if(vertex.x > max.x) max.x = vertex.x;
 			if(vertex.y > max.y) max.y = vertex.y;
 		}
-		return min.midpoint(max);
+		
+		return max;
+		
+	}
+	
+	public Vec2 center() {
+		return min().midpoint(max());
 	}
 	
 	//Get the axes for testing by normalizing the vectors perpendicular the the edges

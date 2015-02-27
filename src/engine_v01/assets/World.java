@@ -3,8 +3,9 @@ package engine_v01.assets;
 import java.util.ArrayList;
 import java.util.List;
 
-import engine_v01.assets.Shape.CollisionResult;
+import org.newdawn.slick.opengl.Texture;
 
+import engine_v01.assets.Shape.CollisionResult;
 import static org.lwjgl.opengl.GL11.*;
 
 //The plug-in for 2D physics. Everything physics-related starts here and ends here, no exceptions
@@ -14,23 +15,37 @@ public class World {
 		
 		//Utilizes Shape2D and Vector2D classes, which include some complex maths. Check for
 		//yourself if you want to see what's happening behind the scenes
-		protected Shape shape;
+		protected Shape shape, texCoords;
 		protected Vec2 velocity;
-		private int texture;
-		private float mass, i_mass, rest;
+		protected float mass, i_mass, rest;
+		private Texture texture;
 		
-		public void remove() {
+		protected void remove() {
 			//"Delete" this entity. Java Garbage Collection will erase the memory
 			entities.remove(this);
 		}
 		
-		public Entity(Shape shape, Vec2 vector, int texture, float mass, float rest) {
+		protected void draw() {
+			texture.bind();
+			glBegin(GL_POLYGON);
+			for(int i = 0; i < shape.vertices.length; i++) {
+				texCoords.vertices[i].glTexCoord();
+				shape.vertices[i].glVertex();
+			}
+			glEnd();
+		}
+		
+		public Entity(Shape shape, Vec2 vector, Texture texture, boolean stretch, float mass, float rest) {
 			this.shape = shape;
 			this.velocity = vector;
 			this.texture = texture;
 			this.mass = mass;
 			this.i_mass = mass == 0 ? 0 : 1 / mass;
 			this.rest = rest;
+			Vec2 min = shape.min(), d = stretch ? shape.max().subtract(min) : new Vec2(texture.getImageWidth(), texture.getImageHeight());
+			Vec2[] texCoords = new Vec2[shape.vertices.length];
+			for(int i = 0; i < shape.vertices.length; i++) texCoords[i] = shape.vertices[i].subtract(min).divide(d);
+			this.texCoords = new Shape(texCoords);
 			entities.add(this);
 		}
 		
@@ -50,7 +65,9 @@ public class World {
 				if(r == null) continue;
 				float d = entity2.velocity.subtract(entity1.velocity).dot(r.normal);
 				if(d > 0) continue;
-				float e = Math.min(entity1.rest, entity2.rest), tm = entity1.i_mass + entity2.i_mass, j = -(1 + e) * d / tm;
+				float tm = entity1.i_mass + entity2.i_mass;
+				if(tm == 0) continue;
+				float e = Math.min(entity1.rest, entity2.rest), j = -(1 + e) * d / tm;
 				Vec2 i = r.normal.scale(j), c = r.normal.scale(r.depth / tm);
 				entity1.shape.translate(c.scale(-entity1.i_mass));
 				entity2.shape.translate(c.scale(entity2.i_mass));
@@ -61,19 +78,7 @@ public class World {
 	}
 	
 	public void draw() {
-		glBegin(GL_QUADS);
-		for(Entity entity : entities) {
-			glBindTexture(GL_TEXTURE_2D, entity.texture);
-			glTexCoord2f(0, 1);
-			entity.shape.vertices[0].glVertex();
-			glTexCoord2f(1, 1);
-			entity.shape.vertices[1].glVertex();
-			glTexCoord2f(1, 0);
-			entity.shape.vertices[2].glVertex();
-			glTexCoord2f(0, 0);
-			entity.shape.vertices[3].glVertex();
-		}
-		glEnd();
+		for(Entity entity : entities) entity.draw();
 	}
 
 	private List<Entity> entities = new ArrayList<Entity>();

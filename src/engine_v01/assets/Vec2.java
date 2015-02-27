@@ -53,6 +53,10 @@ public class Vec2 implements Cloneable {
 		return new Vec2(x / s, y / s);
 	}
 	
+	public Vec2 divide(Vec2 b) {
+		return new Vec2(x / b.x, y / b.y);
+	}
+	
 	//Find the vector perpendicular to itself, using the formula -y / x
 	public Vec2 perpendicular() {
 		return new Vec2(-y, x);
@@ -104,6 +108,10 @@ public class Vec2 implements Cloneable {
 	//Plug-in for OpenGL which allows the user to define vertex coordinates using a Vector2D
 	public void glVertex() {
 		GL11.glVertex2f(x, y);
+	}
+	
+	public void glTexCoord() {
+		GL11.glTexCoord2f(x, y);
 	}
 	
 	@Override
