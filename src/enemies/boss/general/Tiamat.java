@@ -2,16 +2,7 @@ package enemies.boss.general;
 
 import enemies.boss.Boss;
 
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL11.*;
-
-public class Tiamat implements Boss{
-
-	Tiamat() {
-		
-		
-		
-	}
+public class Tiamat implements Boss {
 	
 	@Override
 	public void hit(byte damage) {
