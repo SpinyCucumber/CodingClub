@@ -10,3 +10,4 @@ information we might feel necessary to include.
 I plan us all to be able to make whatever contributions we think would be our next step, and allow others to build upon our ideas. I've already started developing for the game, hoping someone will adopt an idea of mine and take it to the next level.
 
 SpinyCucumber a.k.a. Elijah Hilty
+GogiRocks a.k.a Alex Harper
