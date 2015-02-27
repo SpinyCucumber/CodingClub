@@ -12,26 +12,36 @@ import java.util.Properties;
 
 public class Config {
 	
-	Properties config = new Properties();
+	static Properties config = new Properties();
 	
-	OutputStream configFileO;
-	InputStream configFileI;
+	static OutputStream configFileO;
+	static InputStream configFileI;
 	
-	void set(String property, String data) throws IOException {
+	public static void set(String property, String data) {
 		
-		configFileO = new FileOutputStream("dawnoftheimmortals.properties");
+		try {
+			configFileO = new FileOutputStream("dawnoftheimmortals.properties");
+		
+			config.setProperty(property, data);
 			
-		config.setProperty(property, data);
+			config.store(configFileO, null);
 			
-		config.store(configFileO, null);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		
 	}
 	
-	String load(String property) throws IOException {
+	public static String load(String property) {
 		
-		configFileI = new FileInputStream("dawnoftheimmortals.properties");
+		try {
+			configFileI = new FileInputStream("dawnoftheimmortals.properties");
 		
-		config.load(configFileI);
+			config.load(configFileI);
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		
 		return config.getProperty(property);
 		
