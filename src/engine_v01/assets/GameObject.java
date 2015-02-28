@@ -13,8 +13,10 @@ import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
 import org.newdawn.slick.util.ResourceLoader;
 
-//The game will be initialized from this class. The initialization/boot process will
-//include creating the world, starting the timer, loading resources, initializing OpenGL, etc.
+/**
+ * The game will be initialized from this class. The initialization/boot process will
+ * include creating the world, starting the timer, loading resources, initializing OpenGL, etc.
+ */
 public class GameObject extends Thread {
 	
 	private int width, height, time, lastTime;
@@ -25,10 +27,17 @@ public class GameObject extends Thread {
 		this.height = height;
 	}
 	
+	/**
+	 * Gets the current time from the system, used in calculating the delta time
+	 * @return System Time
+	 */
 	private int getTime() {
 		return (int) (Sys.getTime() * 1000 / Sys.getTimerResolution());
 	}
 	
+	/**
+	 * Creates and runs the game
+	 */
 	public void start() {
 		
 		try {

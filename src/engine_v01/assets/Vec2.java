@@ -3,8 +3,10 @@ package engine_v01.assets;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
-//This is a utility class which includes many basic and some more complex vector maths.
-// Used in other utility classes as well as the entity system.
+/**
+ * This is a utility class which includes many basic and some more complex vector maths.
+ * Used in other utility classes as well as the entity system.
+ */
 public class Vec2 implements Cloneable {
 
 	public float x, y;
