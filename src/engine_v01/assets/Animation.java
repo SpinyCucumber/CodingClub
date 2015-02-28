@@ -10,8 +10,4 @@ public abstract class Animation {
 		frame = delta % length;
 	}
 	
-	public Animation(int length) {
-		this.length = length;
-	}
-	
 }

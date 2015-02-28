@@ -5,11 +5,12 @@ import org.newdawn.slick.opengl.Texture;
 public class TextureAtlas extends Animation {
 
 	private Texture texture;
-	private Vec2 dimensions,point;
+	private Vec2 dimensions, point;
 	
-	public TextureAtlas(int length) {
-		super(length);
-		// TODO Auto-generated constructor stub
+	public TextureAtlas(Texture texture, Vec2 dimensions) {
+		this.texture = texture;
+		this.dimensions = dimensions;
+		length = (int) (dimensions.x * dimensions.y);
 	}
 
 	@Override
@@ -19,10 +20,10 @@ public class TextureAtlas extends Animation {
 	
 	@Override
 	public void update(int delta) {
-		texture.bind();
-		int y = (int) Math.floor(frame/dimensions.x);
-		point = new Vec2(frame - y*dimensions.x, y);
 		super.update(delta);
+		texture.bind();
+		int y = (int) Math.floor(frame / dimensions.x);
+		point = new Vec2(frame - y * dimensions.x, y).divide(dimensions);
 	}
 
 }
