@@ -12,6 +12,8 @@ import org.lwjgl.opengl.DisplayMode;
 import org.newdawn.slick.opengl.TextureLoader;
 import org.newdawn.slick.util.ResourceLoader;
 
+import engine_v01.assets.Player.PlayerControls;
+
 /**
  * The game will be initialized from this class. The initialization/boot process will
  * include creating the world, starting the timer, loading resources, initializing OpenGL, etc.
@@ -55,12 +57,13 @@ public class GameObject extends Thread {
 			
 			glOrtho(0, width, height, 0, 1, -1);
 		
-			Animation t1 = new TextureAtlas(0.01f, TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/texture/material/sandstone.png")), new Vec2(100, 1)),
+			Animation t1 = new TextureAtlas(0, TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/texture/material/sandstone.png")), new Vec2(1, 1)),
 					t2 = new TextureAtlas(0, TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/texture/Playable/Knight/Knight_Good.png")), new Vec2(1, 1));
 			
 			lastTime = getTime();
 			world = new World(new Vec2(0, 0.01f), 0.01f);
 			world.new Entity(Rectangle.fromHalfDimension(new Vec2(500, 600), new Vec2(500, 100)), new Vec2(0, 0), t1, false, 0, 0.3f, 0.9f, 0.99f);
+			PlayerControls controls = null;
 			ArrayList<Vec2> clickPoints = new ArrayList<Vec2>();
 			
 			while(!Display.isCloseRequested()) {
@@ -76,8 +79,11 @@ public class GameObject extends Thread {
 					switch(Mouse.getEventButton()) {
 						case 0 : clickPoints.add(m);
 						break;
-						case 1 : new Player(world, Rectangle.fromHalfDimension(m, new Vec2(10, 20)), new Vec2(0, 0), t2, true, 1, 0.3f, 0.6f, 0.8f);
-						break;
+						case 1 : {
+							Player p = new Player(world, Rectangle.fromHalfDimension(m, new Vec2(10, 20)), new Vec2(0, 0), t2, true, 1, 0.3f, 0.6f, 0.8f);
+							controls = p.new PlayerControls();
+							break;
+						}
 					}
 				}
 				
@@ -96,6 +102,7 @@ public class GameObject extends Thread {
 					}
 				}
 				
+				if(controls != null) controls.update(delta);
 				world.update(delta);
 				
 				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
