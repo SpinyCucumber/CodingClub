@@ -50,7 +50,7 @@ public class Vec2 implements Cloneable {
 	}
 	
 	public Vec2 divide(float s) {
-		return new Vec2(x / s, y / s);
+		return s == 0 ? new Vec2(0, 0) : new Vec2(x / s, y / s);
 	}
 	
 	public Vec2 divide(Vec2 b) {
@@ -73,8 +73,7 @@ public class Vec2 implements Cloneable {
 	
 	//Normalize the vector by dividing both its values by its length
 	public Vec2 normalize() {
-		float length = length();
-		return new Vec2(x / length, y / length);
+		return divide(length());
 	}
 	
 	//Get the dot product of two vectors by adding together the product of their x values and y values

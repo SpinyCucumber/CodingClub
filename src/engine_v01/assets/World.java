@@ -17,7 +17,8 @@ public class World {
 		//yourself if you want to see what's happening behind the scenes
 		protected Shape shape, texCoords;
 		protected Vec2 velocity;
-		protected float mass, i_mass, rest;
+		//Mass, inverse mass, restitution, static friction, and dynamic friction
+		protected float mass, i_mass, rest, s_friction, d_friction;
 		private Texture texture;
 		
 		protected void remove() {
@@ -25,23 +26,41 @@ public class World {
 			entities.remove(this);
 		}
 		
+		protected void update(int delta) {
+			shape.translate(velocity.scale(delta));
+			velocity = velocity.add(gravity.scale(mass));
+			Vec2 n = velocity.subtract(velocity.scale(airDensity));
+			velocity = n.dot(velocity) < 0 ? new Vec2(0, 0) : n;
+		}
+		
+		protected void onCollision(Vec2 impulse, Vec2 c) {
+			shape.translate(c.scale(i_mass));
+			velocity = velocity.add(impulse.scale(i_mass));
+		}
+		
+		protected Vec2 getTexCoord(int i) {
+			return texCoords.vertices[i];
+		}
+		
 		protected void draw() {
 			texture.bind();
 			glBegin(GL_POLYGON);
 			for(int i = 0; i < shape.vertices.length; i++) {
-				texCoords.vertices[i].glTexCoord();
+				getTexCoord(i).glTexCoord();
 				shape.vertices[i].glVertex();
 			}
 			glEnd();
 		}
 		
-		public Entity(Shape shape, Vec2 vector, Texture texture, boolean stretch, float mass, float rest) {
+		public Entity(Shape shape, Vec2 vector, Texture texture, boolean stretch, float mass, float rest, float s_friction, float d_friction) {
 			this.shape = shape;
 			this.velocity = vector;
 			this.texture = texture;
 			this.mass = mass;
 			this.i_mass = mass == 0 ? 0 : 1 / mass;
 			this.rest = rest;
+			this.s_friction = s_friction;
+			this.d_friction = d_friction;
 			Vec2 min = shape.min(), d = stretch ? shape.max().subtract(min) : new Vec2(texture.getImageWidth(), texture.getImageHeight());
 			Vec2[] texCoords = new Vec2[shape.vertices.length];
 			for(int i = 0; i < shape.vertices.length; i++) texCoords[i] = shape.vertices[i].subtract(min).divide(d);
@@ -55,24 +74,24 @@ public class World {
 	public void update(int delta) {
 		for(int i1 = 0; i1 < entities.size(); i1++) {
 			Entity entity1 = entities.get(i1);
-			entity1.shape.translate(entity1.velocity.scale(delta));
-			entity1.velocity = entity1.velocity.add(gravity.scale(entity1.mass));
-			Vec2 n = entity1.velocity.subtract(entity1.velocity.scale(airDensity));
-			entity1.velocity = n.dot(entity1.velocity) < 0 ? new Vec2(0, 0) : n;
+			entity1.update(delta);
 			for(int i2 = i1 + 1; i2 < entities.size(); i2++) {
+				
 				Entity entity2 = entities.get(i2);
-				CollisionResult r = entity1.shape.checkCollision(entity2.shape);
-				if(r == null) continue;
-				float d = entity2.velocity.subtract(entity1.velocity).dot(r.normal);
-				if(d > 0) continue;
 				float tm = entity1.i_mass + entity2.i_mass;
 				if(tm == 0) continue;
-				float e = Math.min(entity1.rest, entity2.rest), j = -(1 + e) * d / tm;
-				Vec2 i = r.normal.scale(j), c = r.normal.scale(r.depth / tm);
-				entity1.shape.translate(c.scale(-entity1.i_mass));
-				entity2.shape.translate(c.scale(entity2.i_mass));
-				entity1.velocity = entity1.velocity.subtract(i.scale(entity1.i_mass));
-				entity2.velocity = entity2.velocity.add(i.scale(entity2.i_mass));
+				CollisionResult r = entity1.shape.checkCollision(entity2.shape);
+				if(r == null) continue;
+				Vec2 rv = entity2.velocity.subtract(entity1.velocity);
+				float d = entity2.velocity.subtract(entity1.velocity).dot(r.normal);
+				if(d > 0) continue;
+				Vec2 t = rv.subtract(r.normal.scale(r.normal.dot(rv))).normalize();
+				float e = Math.min(entity1.rest, entity2.rest), j = -(1 + e) * d / tm, jt = -rv.dot(t) / tm, sf = (entity1.s_friction + entity2.s_friction) / 2;
+				
+				Vec2 i = r.normal.scale(j).add(t.scale(Math.abs(jt) < j * sf ? jt : (entity1.d_friction + entity2.d_friction) / 2 * -j)), c = r.normal.scale(r.depth / tm);
+				entity1.onCollision(i.negate(), c.negate());
+				entity2.onCollision(i, c);
+				
 			}
 		}
 	}
