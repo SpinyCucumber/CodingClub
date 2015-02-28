@@ -11,3 +11,4 @@ I plan us all to be able to make whatever contributions we think would be our ne
 
 SpinyCucumber a.k.a. Elijah Hilty
 GogiRocks a.k.a Alex Harper
+shutterbug2000 a.k.a Joshua Stokes
