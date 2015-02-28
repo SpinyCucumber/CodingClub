@@ -47,13 +47,12 @@ public class GameObject extends Thread {
 			
 			glOrtho(0, width, height, 0, 1, -1);
 		
-			Texture t1 = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/texture/material/foliage1.png")),
+			Texture t1 = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/texture/material/sandstone.png")),
 					t2 = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/texture/Playable/Knight/Knight_Good.png"));
 			
 			lastTime = getTime();
 			world = new World(new Vec2(0, 0.01f), 0.01f);
 			world.new Entity(Rectangle.fromCorners(new Vec2(0, height - 150), new Vec2(width, height)), new Vec2(0, 0), t1, false, 0, 0.3f, 0.9f, 0.99f);
-			new Player(world, Rectangle.fromHalfDimension(new Vec2(500, height - 300), new Vec2(16, 32)), new Vec2(0, 0), t2, true, 1, 0.3f, 0.6f, 0.8f);
 			ArrayList<Vec2> clickPoints = new ArrayList<Vec2>();
 			
 			while(!Display.isCloseRequested()) {
@@ -69,7 +68,7 @@ public class GameObject extends Thread {
 					switch(Mouse.getEventButton()) {
 						case 0 : clickPoints.add(m);
 						break;
-						case 1 : world.new Entity(Rectangle.fromHalfDimension(m, new Vec2(16, 32)), new Vec2(0, 0), t2, true, 1, 0.3f, 0.6f, 0.5f);
+						case 1 : new Player(world, Rectangle.fromHalfDimension(m, new Vec2(16, 32)), new Vec2(0, 0), t2, true, 1, 0.3f, 0.6f, 0.8f);
 						break;
 					}
 				}
@@ -83,6 +82,8 @@ public class GameObject extends Thread {
 							clickPoints.clear();
 							break;
 						}
+						case Keyboard.KEY_C : clickPoints.clear();
+						break;
 						case Keyboard.KEY_ESCAPE : return;
 					}
 				}

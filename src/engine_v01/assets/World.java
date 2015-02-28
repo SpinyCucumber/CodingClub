@@ -19,7 +19,7 @@ public class World {
 		protected Vec2 velocity;
 		//Mass, inverse mass, restitution, static friction, and dynamic friction
 		protected float mass, i_mass, rest, s_friction, d_friction;
-		private Texture texture;
+		protected Texture texture;
 		
 		protected void remove() {
 			//"Delete" this entity. Java Garbage Collection will erase the memory
@@ -38,15 +38,11 @@ public class World {
 			velocity = velocity.add(impulse.scale(i_mass));
 		}
 		
-		protected Vec2 getTexCoord(int i) {
-			return texCoords.vertices[i];
-		}
-		
 		protected void draw() {
 			texture.bind();
 			glBegin(GL_POLYGON);
 			for(int i = 0; i < shape.vertices.length; i++) {
-				getTexCoord(i).glTexCoord();
+				texCoords.vertices[i].glTexCoord();
 				shape.vertices[i].glVertex();
 			}
 			glEnd();
