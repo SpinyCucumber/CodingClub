@@ -46,27 +46,25 @@ public class Shape {
 	
 	public Vec2 min() {
 		
-		Vec2 min = vertices[0].clone();
+		float x = vertices[0].x, y = vertices[0].y;
 		for(int i = 1; i < vertices.length; i++) {
 			Vec2 vertex = vertices[i];
-			if(vertex.x < min.x) min.x = vertex.x;
-			if(vertex.y < min.y) min.y = vertex.y;
+			x = Math.min(x, vertex.x);
+			y = Math.min(y, vertex.y);
 		}
-		return min;
+		return new Vec2(x, y);
 		
 	}
 	
 	public Vec2 max() {
 		
-		Vec2 max = vertices[0].clone();
-		
+		float x = vertices[0].x, y = vertices[0].y;
 		for(int i = 1; i < vertices.length; i++) {
 			Vec2 vertex = vertices[i];
-			if(vertex.x > max.x) max.x = vertex.x;
-			if(vertex.y > max.y) max.y = vertex.y;
+			x = Math.max(x, vertex.x);
+			y = Math.max(y, vertex.y);
 		}
-		
-		return max;
+		return new Vec2(x, y);
 		
 	}
 	
