@@ -7,8 +7,6 @@ varying vec4 vertex;
 varying vec2 texCoord;
 
 void main() {
-    vec2 pos = (gl_ModelViewMatrix * vertex).xy;
-    float f = sin(6 * gl_FragCoord.x * gl_FragCoord.y);
     vec4 color = texture2D(textureUnit, texCoord);
-    gl_FragColor = vec4(vec3(f * color.rgb), color.a);
+    gl_FragColor = color;
 }
