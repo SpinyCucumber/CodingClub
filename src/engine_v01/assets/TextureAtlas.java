@@ -13,15 +13,21 @@ public class TextureAtlas extends Animation {
 		length = (int) (dimensions.x * dimensions.y);
 	}
 
-	@Override
-	public void texCoord(Vec2 texCoord) {
-		texCoord.divide(dimensions).add(point).glTexCoord();
+	public Vec2 getTexCoord(Vec2 texCoord) {
+		return texCoord.divide(dimensions).add(point);
+	}
+
+	public Vec2 getTextureDimensions() {
+		return new Vec2(texture.getImageWidth(), texture.getImageHeight()).divide(dimensions);
+	}
+
+	public void bind() {
+		texture.bind();
 	}
 	
 	@Override
 	public void update(int delta) {
 		super.update(delta);
-		texture.bind();
 		int y = (int) Math.floor(frame / dimensions.x);
 		point = new Vec2(frame - y * dimensions.x, y).divide(dimensions);
 	}

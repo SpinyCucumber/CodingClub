@@ -5,14 +5,13 @@ import static org.lwjgl.opengl.GL11.glBegin;
 import static org.lwjgl.opengl.GL11.glEnd;
 
 import org.lwjgl.input.Keyboard;
-import org.newdawn.slick.opengl.Texture;
 
 public class Player extends Creature {
 	
 	protected float speed = 0.03f;
 	private boolean side;
 	
-	public Player(World world, Shape shape, Vec2 vector, Texture texture, boolean stretch, float mass, float rest, float s_friction, float d_friction) {
+	public Player(World world, Shape shape, Vec2 vector, Animation texture, boolean stretch, float mass, float rest, float s_friction, float d_friction) {
 		super(world, shape, vector, texture, stretch, mass, rest, s_friction, d_friction);
 	}
 	

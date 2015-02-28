@@ -3,8 +3,6 @@ package engine_v01.assets;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.newdawn.slick.opengl.Texture;
-
 import engine_v01.assets.Shape.CollisionResult;
 import static org.lwjgl.opengl.GL11.*;
 
@@ -19,7 +17,7 @@ public class World {
 		protected Vec2 velocity;
 		//Mass, inverse mass, restitution, static friction, and dynamic friction
 		protected float mass, i_mass, rest, s_friction, d_friction;
-		protected Texture texture;
+		protected Animation texture;
 		
 		protected void remove() {
 			//"Delete" this entity. Java Garbage Collection will erase the memory
@@ -31,6 +29,7 @@ public class World {
 			velocity = velocity.add(gravity.scale(mass));
 			Vec2 n = velocity.subtract(velocity.scale(airDensity));
 			velocity = n.dot(velocity) < 0 ? new Vec2(0, 0) : n;
+			texture.update(delta);
 		}
 		
 		protected void onCollision(Vec2 impulse, Vec2 c) {
@@ -42,13 +41,13 @@ public class World {
 			texture.bind();
 			glBegin(GL_POLYGON);
 			for(int i = 0; i < shape.vertices.length; i++) {
-				texCoords.vertices[i].glTexCoord();
+				texture.getTexCoord(texCoords.vertices[i]).glTexCoord();
 				shape.vertices[i].glVertex();
 			}
 			glEnd();
 		}
 		
-		public Entity(Shape shape, Vec2 vector, Texture texture, boolean stretch, float mass, float rest, float s_friction, float d_friction) {
+		public Entity(Shape shape, Vec2 vector, Animation texture, boolean stretch, float mass, float rest, float s_friction, float d_friction) {
 			this.shape = shape;
 			this.velocity = vector;
 			this.texture = texture;
@@ -57,7 +56,7 @@ public class World {
 			this.rest = rest;
 			this.s_friction = s_friction;
 			this.d_friction = d_friction;
-			Vec2 min = shape.min(), d = stretch ? shape.max().subtract(min) : new Vec2(texture.getImageWidth(), texture.getImageHeight());
+			Vec2 min = shape.min(), d = stretch ? shape.max().subtract(min) : texture.getTextureDimensions();
 			Vec2[] texCoords = new Vec2[shape.vertices.length];
 			for(int i = 0; i < shape.vertices.length; i++) texCoords[i] = shape.vertices[i].subtract(min).divide(d);
 			this.texCoords = new Shape(texCoords);
