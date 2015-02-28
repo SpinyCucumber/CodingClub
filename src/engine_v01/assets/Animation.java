@@ -8,9 +8,10 @@ public abstract class Animation implements Cloneable {
 	public abstract Vec2 getTexCoord(Vec2 texCoord);
 	public abstract Vec2 getTextureDimensions();
 	public abstract void bind();
+	public abstract Animation clone();
 	
 	public void update(int delta) {
-		frame = (frame + speed * delta);
+		frame = (frame + speed * delta) % length;
 	}
 	
 	public Animation(float speed) {

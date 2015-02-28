@@ -52,7 +52,7 @@ public class World {
 		public Entity(Shape shape, Vec2 vector, Animation texture, boolean stretch, float mass, float rest, float s_friction, float d_friction) {
 			this.shape = shape;
 			this.velocity = vector;
-			this.texture = texture;
+			this.texture = texture.clone();
 			this.mass = mass;
 			this.i_mass = mass == 0 ? 0 : 1 / mass;
 			this.rest = rest;

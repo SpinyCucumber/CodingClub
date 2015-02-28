@@ -34,7 +34,7 @@ public class Player extends Creature {
 		glBegin(GL_POLYGON);
 		for(int i = 0; i < shape.vertices.length; i++) {
 			Vec2 uv = texCoords.vertices[i];
-			(side ? new Vec2(1 - uv.x, uv.y) : uv).glTexCoord();
+			texture.getTexCoord(side ? new Vec2(1 - uv.x, uv.y) : uv).glTexCoord();
 			shape.vertices[i].glVertex();
 		}
 		glEnd();

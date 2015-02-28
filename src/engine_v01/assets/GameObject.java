@@ -55,12 +55,12 @@ public class GameObject extends Thread {
 			
 			glOrtho(0, width, height, 0, 1, -1);
 		
-			Animation t1 = new TextureAtlas(0.005f, TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/texture/material/sandstone.png")), new Vec2(1, 1)),
-					t2 = new TextureAtlas(0, TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/texture/Playable/Knight/Knight_Good.png")), new Vec2(2, 2));
+			Animation t1 = new TextureAtlas(0, TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/texture/material/sandstone.png")), new Vec2(1, 1)),
+					t2 = new TextureAtlas(0.001f, TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/texture/Playable/Knight/Knight_Good.png")), new Vec2(2, 2));
 			
 			lastTime = getTime();
 			world = new World(new Vec2(0, 0.01f), 0.01f);
-			world.new Entity(Rectangle.fromCorners(new Vec2(0, height - 150), new Vec2(width, height)), new Vec2(0, 0), t1, false, 0, 0.3f, 0.9f, 0.99f);
+			world.new Entity(Rectangle.fromHalfDimension(new Vec2(500, 600), new Vec2(500, 100)), new Vec2(0, 0), t1, false, 0, 0.3f, 0.9f, 0.99f);
 			ArrayList<Vec2> clickPoints = new ArrayList<Vec2>();
 			
 			while(!Display.isCloseRequested()) {

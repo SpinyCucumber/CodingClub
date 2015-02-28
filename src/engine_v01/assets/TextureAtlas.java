@@ -34,7 +34,7 @@ public class TextureAtlas extends Animation {
 	public void update(int delta) {
 		super.update(delta);
 		int y = (int) Math.floor(frame / dimensions.x);
-		point = new Vec2(frame - y * dimensions.x, y).divide(dimensions);
+		point = new Vec2((int) Math.floor(frame) - y * dimensions.x, y).divide(dimensions);
 	}
 
 }
