@@ -7,7 +7,8 @@ public class TextureAtlas extends Animation {
 	private Texture texture;
 	private Vec2 dimensions, point;
 	
-	public TextureAtlas(Texture texture, Vec2 dimensions) {
+	public TextureAtlas(float speed, Texture texture, Vec2 dimensions) {
+		super(speed);
 		this.texture = texture;
 		this.dimensions = dimensions;
 		length = (int) (dimensions.x * dimensions.y);
@@ -23,6 +24,10 @@ public class TextureAtlas extends Animation {
 
 	public void bind() {
 		texture.bind();
+	}
+	
+	public TextureAtlas clone() {
+		return new TextureAtlas(speed, texture, dimensions.clone());
 	}
 	
 	@Override

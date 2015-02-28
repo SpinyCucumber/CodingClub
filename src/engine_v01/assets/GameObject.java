@@ -46,8 +46,8 @@ public class GameObject extends Thread {
 			
 			glOrtho(0, width, height, 0, 1, -1);
 		
-			Animation t1 = new TextureAtlas(TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/texture/material/sandstone.png")), new Vec2(1, 1)),
-					t2 = new TextureAtlas(TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/texture/Playable/Knight/Knight_Good.png")), new Vec2(1, 1));
+			Animation t1 = new TextureAtlas(0.005f, TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/texture/material/sandstone.png")), new Vec2(1, 1)),
+					t2 = new TextureAtlas(0, TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/texture/Playable/Knight/Knight_Good.png")), new Vec2(2, 2));
 			
 			lastTime = getTime();
 			world = new World(new Vec2(0, 0.01f), 0.01f);
