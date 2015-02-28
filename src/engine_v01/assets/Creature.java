@@ -2,6 +2,9 @@ package engine_v01.assets;
 
 import engine_v01.assets.World.Entity;
 
+/**
+ * Same as {@link Entity} class, but with health
+ */
 public class Creature extends Entity {
 
 	protected float health;

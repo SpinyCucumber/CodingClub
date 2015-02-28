@@ -1,7 +1,9 @@
 package engine_v01.assets;
 
-//Extension of the Shape2D class designed to speed up processing by using a minimal amount of
-//axes. Also contains an convenience constructor which takes the center and the dimensions
+/**
+ * Extension of the Shape2D class designed to speed up processing by using a minimal amount of
+ * axes. Also contains an convenience constructor which takes the center and the dimensions
+ */
 public class Rectangle extends Shape {
 
 	private Rectangle(Vec2...vec2s) {

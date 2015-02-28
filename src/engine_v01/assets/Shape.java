@@ -1,7 +1,8 @@
 package engine_v01.assets;
 
-//A more complex geometrical class, usually used detect collisions, but has many applications
-//Utilizes the Vector2D class heavily
+/**A more complex geometrical class, usually used to detect collisions, but has many applications.
+ * Utilizes the Vector2D class heavily.
+ */
 public class Shape {
 	
 	//The wrapper class used to handle collisions, usually discarded immediately

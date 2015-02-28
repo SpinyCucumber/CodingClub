@@ -6,7 +6,9 @@ import java.util.List;
 import engine_v01.assets.Shape.CollisionResult;
 import static org.lwjgl.opengl.GL11.*;
 
-//The plug-in for 2D physics. Everything physics-related starts here and ends here, no exceptions
+/**
+ * The plug-in for 2D physics. Everything physics-related starts here and ends here, no exceptions
+ */
 public class World {
 	
 	public class Entity {
