@@ -15,7 +15,7 @@ public class TextureAtlas extends Animation {
 
 	@Override
 	public void texCoord(Vec2 texCoord) {
-		
+		texCoord.divide(dimensions).add(point).glTexCoord();
 	}
 	
 	@Override

@@ -1,4 +1,4 @@
-Coding Club Collaborative Project, 2014
+Coding Club Collaborative Project, 2014-2015
 
 Hello!
 As you can most plainly see, I have started a GitHub repository so that we can share our ideas
