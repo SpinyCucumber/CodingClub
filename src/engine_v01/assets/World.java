@@ -19,18 +19,22 @@ public class World {
 		protected Shape shape, texCoords;
 		protected Vec2 velocity;
 		/**
-		 * Mass, inverse mass, restitution, static friction, and dynamic friction
+		 * Mass, inverse mass, restitution, static friction, and dynamic friction.
 		 */
 		protected float mass, i_mass, rest, s_friction, d_friction;
 		protected Animation texture;
 		
 		protected void remove() {
 			/**
-			 * "Delete" this entity. Java Garbage Collection will erase the memory
+			 * "Delete" this entity. Java Garbage Collection will erase the memory.
 			 */
 			entities.remove(this);
 		}
 		
+		/**
+		 * Applies gravity to the entity.
+		 * @param delta Delta time
+		 */
 		protected void update(int delta) {
 			shape.translate(velocity.scale(delta));
 			velocity = velocity.add(gravity.scale(mass));
@@ -39,11 +43,19 @@ public class World {
 			texture.update(delta);
 		}
 		
+		/**
+		 * Checks for a collision between 2 entities.
+		 * @param impulse Impulse vector.
+		 * @param c Correction vector to push the entities apart.
+		 */
 		protected void onCollision(Vec2 impulse, Vec2 c) {
 			shape.translate(c.scale(i_mass));
 			velocity = velocity.add(impulse.scale(i_mass));
 		}
 		
+		/**
+		 * Draws an entity.
+		 */
 		protected void draw() {
 			texture.bind();
 			glBegin(GL_POLYGON);
@@ -73,7 +85,7 @@ public class World {
 	}
 	
 	/**
-	 * Apply physics to entities and check for collisions using delta timing
+	 * Apply physics to entities and check for collisions using delta timing.
 	 * @param delta Delta time
 	 */
 	public void update(int delta) {
@@ -101,6 +113,9 @@ public class World {
 		}
 	}
 	
+	/**
+	 * Draws the entities in the world.
+	 */
 	public void draw() {
 		for(Entity entity : entities) entity.draw();
 	}
@@ -108,7 +123,7 @@ public class World {
 	private List<Entity> entities = new ArrayList<Entity>();
 	private Vec2 gravity;
 	/**
-	 * Resistance when moving through the air. Space has 0 resistance
+	 * Resistance when moving through the air. Space has 0 resistance.
 	 */
 	private float airDensity;
 	
