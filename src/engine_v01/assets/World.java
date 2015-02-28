@@ -13,16 +13,21 @@ public class World {
 	
 	public class Entity {
 		
-		//Utilizes Shape2D and Vector2D classes, which include some complex maths. Check for
-		//yourself if you want to see what's happening behind the scenes
+		/**Utilizes Shape2D and Vector2D classes, which include some complex maths. Check for
+		 * yourself if you want to see what's happening behind the scenes.
+		 */
 		protected Shape shape, texCoords;
 		protected Vec2 velocity;
-		//Mass, inverse mass, restitution, static friction, and dynamic friction
+		/**
+		 * Mass, inverse mass, restitution, static friction, and dynamic friction
+		 */
 		protected float mass, i_mass, rest, s_friction, d_friction;
 		protected Animation texture;
 		
 		protected void remove() {
-			//"Delete" this entity. Java Garbage Collection will erase the memory
+			/**
+			 * "Delete" this entity. Java Garbage Collection will erase the memory
+			 */
 			entities.remove(this);
 		}
 		
@@ -67,7 +72,10 @@ public class World {
 		
 	}
 	
-	//Apply physics to entities and check for collisions using delta timing
+	/**
+	 * Apply physics to entities and check for collisions using delta timing
+	 * @param delta Delta time
+	 */
 	public void update(int delta) {
 		for(int i1 = 0; i1 < entities.size(); i1++) {
 			Entity entity1 = entities.get(i1);
@@ -99,7 +107,9 @@ public class World {
 
 	private List<Entity> entities = new ArrayList<Entity>();
 	private Vec2 gravity;
-	//Resistance when moving through the air. Space has 0 resistance
+	/**
+	 * Resistance when moving through the air. Space has 0 resistance
+	 */
 	private float airDensity;
 	
 	public World(Vec2 gravity, float airDensity) {
