@@ -62,6 +62,10 @@ public class GLSLProgram {
 		glUniform2f(getUniformLocation(name), x, y);
 	}
 	
+	public void setUniform(String name, float x, float y, float z) {
+		glUniform3f(getUniformLocation(name), x, y, z);
+	}
+	
 	public void setUniform(String name, float r, float g, float b, float a) {
 		glUniform4f(getUniformLocation(name), r, g, b, a);
 	}

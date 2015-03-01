@@ -49,8 +49,7 @@ public class GameObject extends Thread {
 			Display.setDisplayMode(new DisplayMode(width, height));
 			Display.setVSyncEnabled(true);
 			Display.create();
-			
-			glClearColor(0.5f, 0.5f, 1, 1);
+
 			glEnable(GL_TEXTURE_2D);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -61,9 +60,10 @@ public class GameObject extends Thread {
 			
 			shader = new GLSLProgram(GLSLProgram.loadShader(GL_VERTEX_SHADER, "res/shader/lighting.vs"), GLSLProgram.loadShader(GL_FRAGMENT_SHADER, "res/shader/lighting.fs"));
 			shader.use();
+			shader.setUniform("fog", 0, 0, 0);
 			
-			Animation t1 = new TextureAtlas(0, TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/texture/material/sandstone.png")), new Vec2(1, 1)),
-					t2 = new TextureLineup(0.004f, TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/texture/Playable/Dragon/Dragon_Flying_Wing.png")), TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/texture/Playable/Dragon/Dragon_Flying_Wing_Mouth.png")));
+			Animation t1 = new TextureAtlas(0, TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/texture/material/foliage1.png")), new Vec2(1, 1)),
+					t2 = new TextureLineup(0.004f, TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/texture/Playable/Knight/Knight_Good.png")), TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/texture/Playable/Knight/Knight_Good_Swing.png")));
 			
 			lastTime = getTime();
 			world = new World(new Vec2(0, 0.01f), 0.01f);
@@ -72,7 +72,6 @@ public class GameObject extends Thread {
 			ArrayList<Vec2> clickPoints = new ArrayList<Vec2>();
 			
 			while(!Display.isCloseRequested()) {
-				shader.setUniform("point", Mouse.getX(), Mouse.getY());
 				
 				time = getTime();
 				int delta = time - lastTime;
@@ -110,6 +109,9 @@ public class GameObject extends Thread {
 				
 				if(controls != null) controls.update(delta);
 				world.update(delta);
+
+				shader.setUniform("point", Mouse.getX(), Mouse.getY());
+				shader.setUniform("time", time);
 				
 				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 				world.draw();
