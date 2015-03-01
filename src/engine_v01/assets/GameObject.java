@@ -56,12 +56,13 @@ public class GameObject extends Thread {
 			glEnable(GL_TEXTURE_2D);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+			glClearColor(0.5f, 0.5f, 1, 1);
 			
 			glOrtho(0, width, height, 0, 1, -1);
 			
 			shader = new GLSLProgram(GLSLProgram.loadShader(GL_VERTEX_SHADER, "res/shader/lighting.vs"), GLSLProgram.loadShader(GL_FRAGMENT_SHADER, "res/shader/lighting.fs"));
 			shader.use();
-			shader.setUniform("fog", 0, 0, 0);
+			shader.setUniform("fog", 0.5f, 0.5f, 1);
 			
 			Animation t1 = new TextureAtlas(0, TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/texture/material/sandstone.png")), new Vec2(1, 1)),
 					t2 = new TextureLineup(0.004f, TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/texture/Playable/Knight/Knight_Good.png")), TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/texture/Playable/Knight/Knight_Good_Swing.png")));
@@ -69,7 +70,7 @@ public class GameObject extends Thread {
 			lastTime = getTime();
 			world = new World(new Vec2(0, 0.01f), 0.01f);
 			world.new Entity(Rectangle.fromHalfDimension(new Vec2(500, 600), new Vec2(500, 100)), new Vec2(0, 0), t1, false, 0, 0.3f, 0.9f, 0.99f);
-			PlayerType type = new PlayerType(t2, true, 1, 0.3f, 0.8f, 0.9f, 1, 0.05f);
+			PlayerType type = new PlayerType(t2, true, 1, 0.3f, 0.8f, 0.9f, 1, 0.015f, 0.0001f, new Vec2(0, -0.2f));
 			PlayerControls controls = null;
 			ArrayList<Vec2> clickPoints = new ArrayList<Vec2>();
 			
@@ -87,7 +88,7 @@ public class GameObject extends Thread {
 						case 0 : clickPoints.add(m);
 						break;
 						case 1 : {
-							Player p = new Player(world, Rectangle.fromHalfDimension(m, new Vec2(30, 60)), new Vec2(0, 0), type);
+							Player p = new Player(world, Rectangle.fromHalfDimension(m, new Vec2(20, 40)), new Vec2(0, 0), type);
 							controls = p.new PlayerControls();
 							break;
 						}

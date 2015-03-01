@@ -8,13 +8,18 @@ import org.lwjgl.input.Keyboard;
 
 public class Player extends Creature {
 	
+	private static final float jump_threshold = 0.9f;
+	
 	public static class PlayerType extends CreatureType {
 		
-		private float speed;
+		private float speed, airSpeed;
+		private Vec2 jump;
 		
-		public PlayerType(Animation texture, boolean stretch, float mass, float rest, float s_friction, float d_friction, float health, float speed) {
+		public PlayerType(Animation texture, boolean stretch, float mass, float rest, float s_friction, float d_friction, float health, float speed, float airSpeed, Vec2 jump) {
 			super(texture, stretch, mass, rest, s_friction, d_friction, health);
 			this.speed = speed;
+			this.airSpeed = airSpeed;
+			this.jump = jump;
 		}
 		
 	}
@@ -23,25 +28,37 @@ public class Player extends Creature {
 		
 		public void update(int delta) {
 			if(Keyboard.isKeyDown(Keyboard.KEY_D)) {
-				velocity.x += speed;
+				velocity.x += onGround ? speed : airSpeed;
 				side = false;
 			}
 			if(Keyboard.isKeyDown(Keyboard.KEY_A)) {
-				velocity.x -= speed;
+				velocity.x -= onGround ? speed : airSpeed;
 				side = true;
 			}
-			if(Keyboard.isKeyDown(Keyboard.KEY_W)) velocity.y -= speed;
-			if(Keyboard.isKeyDown(Keyboard.KEY_S)) velocity.y += speed;
+			if(Keyboard.isKeyDown(Keyboard.KEY_W) && onGround) {
+				velocity = velocity.add(jump);
+				onGround = false;
+			}
 		}
 		
 	}
 	
-	protected float speed = 0.03f;
-	private boolean side;
+	protected float speed, airSpeed;
+	protected Vec2 jump, n_jump;
+	private boolean side, onGround;
 	
 	public Player(World world, Shape shape, Vec2 velocity, PlayerType t) {
 		super(world, shape, velocity, t);
 		this.speed = t.speed;
+		this.airSpeed = t.airSpeed;
+		this.jump = t.jump;
+		n_jump = t.jump.normalize();
+	}
+	
+	@Override
+	protected void onCollision(Vec2 impulse, Vec2 c) {
+		if(impulse.normalize().dot(n_jump) > jump_threshold) onGround = true;
+		super.onCollision(impulse, c);
 	}
 	
 	protected void draw() {
