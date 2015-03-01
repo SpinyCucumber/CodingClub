@@ -10,7 +10,6 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
-import org.lwjgl.opengl.PixelFormat;
 import org.newdawn.slick.opengl.TextureLoader;
 import org.newdawn.slick.util.ResourceLoader;
 
@@ -50,7 +49,7 @@ public class GameObject extends Thread {
 			Display.setTitle("Game");
 			Display.setDisplayMode(new DisplayMode(width, height));
 			Display.setVSyncEnabled(true);
-			Display.create(new PixelFormat(0, 0, 0, 4));
+			Display.create();
 
 			glEnable(GL_BLEND);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
