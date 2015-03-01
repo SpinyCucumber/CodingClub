@@ -72,6 +72,7 @@ public class GameObject extends Thread {
 			ArrayList<Vec2> clickPoints = new ArrayList<Vec2>();
 			
 			while(!Display.isCloseRequested()) {
+				shader.setUniform("point", Mouse.getX(), Mouse.getY());
 				
 				time = getTime();
 				int delta = time - lastTime;
