@@ -8,6 +8,17 @@ import org.lwjgl.input.Keyboard;
 
 public class Player extends Creature {
 	
+	public static class PlayerType extends CreatureType {
+		
+		private float speed;
+		
+		public PlayerType(Animation texture, boolean stretch, float mass, float rest, float s_friction, float d_friction, float health, float speed) {
+			super(texture, stretch, mass, rest, s_friction, d_friction, health);
+			this.speed = speed;
+		}
+		
+	}
+	
 	public class PlayerControls {
 		
 		public void update(int delta) {
@@ -28,8 +39,9 @@ public class Player extends Creature {
 	protected float speed = 0.03f;
 	private boolean side;
 	
-	public Player(World world, Shape shape, Vec2 vector, Animation texture, boolean stretch, float mass, float rest, float s_friction, float d_friction) {
-		super(world, shape, vector, texture, stretch, mass, rest, s_friction, d_friction);
+	public Player(World world, Shape shape, Vec2 velocity, PlayerType t) {
+		super(world, shape, velocity, t);
+		this.speed = t.speed;
 	}
 	
 	protected void draw() {

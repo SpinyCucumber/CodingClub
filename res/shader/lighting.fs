@@ -8,6 +8,6 @@ uniform vec2 point;
 
 void main() {
 	vec4 color = texture2D(textureUnit, texCoord);
-	float l = 1 / distance(gl_FragCoord.xy, point) * 200.0;
+	float l = 1 / distance(gl_FragCoord.xy, point) * (100.0 + 75.0 * sin(0.001 * time));
 	gl_FragColor = vec4((l > 1) ? l * color.rgb : mix(fog, color.rgb, l), color.a); 
 }

@@ -11,6 +11,23 @@ import static org.lwjgl.opengl.GL11.*;
  */
 public class World {
 	
+	public static class EntityType {
+		
+		private float mass, rest, s_friction, d_friction;
+		private Animation texture;
+		private boolean stretch;
+		
+		public EntityType(Animation texture, boolean stretch, float mass, float rest, float s_friction, float d_friction) {
+			this.texture = texture;
+			this.mass = mass;
+			this.rest = rest;
+			this.s_friction = s_friction;
+			this.d_friction = d_friction;
+			this.stretch = stretch;
+		}
+		
+	}
+	
 	public class Entity {
 		
 		/**Utilizes Shape2D and Vector2D classes, which include some complex maths. Check for
@@ -66,9 +83,9 @@ public class World {
 			glEnd();
 		}
 		
-		public Entity(Shape shape, Vec2 vector, Animation texture, boolean stretch, float mass, float rest, float s_friction, float d_friction) {
+		public Entity(Shape shape, Vec2 velocity, Animation texture, boolean stretch, float mass, float rest, float s_friction, float d_friction) {
 			this.shape = shape;
-			this.velocity = vector;
+			this.velocity = velocity;
 			this.texture = texture.clone();
 			this.mass = mass;
 			this.i_mass = mass == 0 ? 0 : 1 / mass;
@@ -80,6 +97,10 @@ public class World {
 			for(int i = 0; i < shape.vertices.length; i++) texCoords[i] = shape.vertices[i].subtract(min).divide(d);
 			this.texCoords = new Shape(texCoords);
 			entities.add(this);
+		}
+		
+		public Entity(Shape shape, Vec2 velocity, EntityType t) {
+			this(shape, velocity, t.texture, t.stretch, t.mass, t.rest, t.s_friction, t.d_friction);
 		}
 		
 	}

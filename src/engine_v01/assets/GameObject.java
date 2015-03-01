@@ -10,10 +10,12 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
+import org.lwjgl.opengl.PixelFormat;
 import org.newdawn.slick.opengl.TextureLoader;
 import org.newdawn.slick.util.ResourceLoader;
 
 import engine_v01.assets.Player.PlayerControls;
+import engine_v01.assets.Player.PlayerType;
 
 /**
  * The game will be initialized from this class. The initialization/boot process will
@@ -48,13 +50,13 @@ public class GameObject extends Thread {
 			Display.setTitle("Game");
 			Display.setDisplayMode(new DisplayMode(width, height));
 			Display.setVSyncEnabled(true);
-			Display.create();
+			Display.create(new PixelFormat(0, 0, 0, 4));
 
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			glEnable(GL_TEXTURE_2D);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-			glEnable(GL_BLEND);
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			
 			glOrtho(0, width, height, 0, 1, -1);
 			
@@ -62,12 +64,13 @@ public class GameObject extends Thread {
 			shader.use();
 			shader.setUniform("fog", 0, 0, 0);
 			
-			Animation t1 = new TextureAtlas(0, TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/texture/material/foliage1.png")), new Vec2(1, 1)),
+			Animation t1 = new TextureAtlas(0, TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/texture/material/sandstone.png")), new Vec2(1, 1)),
 					t2 = new TextureLineup(0.004f, TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/texture/Playable/Knight/Knight_Good.png")), TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/texture/Playable/Knight/Knight_Good_Swing.png")));
 			
 			lastTime = getTime();
 			world = new World(new Vec2(0, 0.01f), 0.01f);
 			world.new Entity(Rectangle.fromHalfDimension(new Vec2(500, 600), new Vec2(500, 100)), new Vec2(0, 0), t1, false, 0, 0.3f, 0.9f, 0.99f);
+			PlayerType type = new PlayerType(t2, true, 1, 0.3f, 0.8f, 0.9f, 1, 0.05f);
 			PlayerControls controls = null;
 			ArrayList<Vec2> clickPoints = new ArrayList<Vec2>();
 			
@@ -85,7 +88,7 @@ public class GameObject extends Thread {
 						case 0 : clickPoints.add(m);
 						break;
 						case 1 : {
-							Player p = new Player(world, Rectangle.fromHalfDimension(m, new Vec2(30, 60)), new Vec2(0, 0), t2, true, 1, 0.3f, 0.6f, 0.8f);
+							Player p = new Player(world, Rectangle.fromHalfDimension(m, new Vec2(30, 60)), new Vec2(0, 0), type);
 							controls = p.new PlayerControls();
 							break;
 						}
