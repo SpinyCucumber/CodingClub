@@ -10,6 +10,7 @@ public class TextureAtlas extends Animation {
 	public TextureAtlas(float speed, Texture texture, Vec2 dimensions) {
 		super(speed);
 		this.texture = texture;
+		System.out.println(texture.getTextureID());
 		this.dimensions = dimensions;
 		length = (int) (dimensions.x * dimensions.y);
 	}

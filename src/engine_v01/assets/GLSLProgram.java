@@ -70,4 +70,8 @@ public class GLSLProgram {
 		glUniform4f(getUniformLocation(name), r, g, b, a);
 	}
 	
+	public static void unbind() {
+		glUseProgram(0);
+	}
+	
 }

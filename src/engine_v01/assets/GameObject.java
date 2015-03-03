@@ -50,7 +50,7 @@ public class GameObject extends Thread {
 			Display.setDisplayMode(new DisplayMode(width, height));
 			Display.setVSyncEnabled(true);
 			Display.create();
-
+			
 			glEnable(GL_BLEND);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			glEnable(GL_TEXTURE_2D);
@@ -58,18 +58,22 @@ public class GameObject extends Thread {
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 			glClearColor(0.5f, 0.5f, 1, 1);
 			
+			glMatrixMode(GL_PROJECTION);
 			glOrtho(0, width, height, 0, 1, -1);
+			glMatrixMode(GL_MODELVIEW);
 			
 			shader = new GLSLProgram(GLSLProgram.loadShader(GL_VERTEX_SHADER, "res/shader/lighting.vs"), GLSLProgram.loadShader(GL_FRAGMENT_SHADER, "res/shader/lighting.fs"));
 			shader.use();
-			shader.setUniform("fog", 0.5f, 0.5f, 1);
+			shader.setUniform("radius", 700);
+			shader.setUniform("resolution", width, height);
+			
+			Framebuffer fbo = new Framebuffer(width, height);
 			
 			Animation t1 = new TextureAtlas(0, TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/texture/material/sandstone.png")), new Vec2(1, 1)),
 					t2 = new TextureLineup(0.004f, TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/texture/Playable/Knight/Knight_Good.png")), TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/texture/Playable/Knight/Knight_Good_Swing.png")));
 			
 			lastTime = getTime();
 			world = new World(new Vec2(0, 0.01f), 0.01f);
-			world.new Entity(Rectangle.fromHalfDimension(new Vec2(500, 600), new Vec2(500, 100)), new Vec2(0, 0), t1, false, 0, 0.3f, 0.9f, 0.99f);
 			PlayerType type = new PlayerType(t2, true, 1, 0.3f, 0.8f, 0.9f, 1, 0.015f, 0.0001f, new Vec2(0, -0.2f));
 			PlayerControls controls = null;
 			ArrayList<Vec2> clickPoints = new ArrayList<Vec2>();
@@ -88,7 +92,7 @@ public class GameObject extends Thread {
 						case 0 : clickPoints.add(m);
 						break;
 						case 1 : {
-							Player p = new Player(world, Rectangle.fromHalfDimension(m, new Vec2(20, 40)), new Vec2(0, 0), type);
+							Player p = new Player(world, Rectangle.fromHalfDimension(m, new Vec2(10, 20)), new Vec2(0, 0), type);
 							controls = p.new PlayerControls();
 							break;
 						}
@@ -113,23 +117,41 @@ public class GameObject extends Thread {
 				if(controls != null) controls.update(delta);
 				world.update(delta);
 
-				shader.setUniform("point", Mouse.getX(), Mouse.getY());
-				shader.setUniform("time", time);
+				GLSLProgram.unbind();
+				fbo.bind();
 				
+				glBindTexture(GL_TEXTURE_2D, 0);
 				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 				world.draw();
 				
 				if(clickPoints.size() > 1) {
 					float i = 0.5f + 0.5f * (float) Math.sin(0.003f * time);
-					glDisable(GL_TEXTURE_2D);
 					glColor4f(0, 0, 0, i);
 					glBegin(GL_LINE_LOOP);
 					for(Vec2 v : clickPoints) v.glVertex();
 					glEnd();
 					glColor4f(1, 1, 1, 1);
-					glEnable(GL_TEXTURE_2D);
 				}
-			
+				
+				Framebuffer.unbind();
+				
+				shader.use();
+				shader.setUniform("point", Mouse.getX(), Mouse.getY());
+				shader.setUniform("time", time);
+				
+				fbo.bindTexture();
+				
+				glBegin(GL_QUADS);
+				glTexCoord2f(0, 1);
+				glVertex2f(0, 0);
+				glTexCoord2f(1, 1);
+				glVertex2f(width, 0);
+				glTexCoord2f(1, 0);
+				glVertex2f(width, height);
+				glTexCoord2f(0, 0);
+				glVertex2f(0, height);
+				glEnd();
+				
 				Display.update();
 				Display.sync(60);
 			
