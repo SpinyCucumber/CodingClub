@@ -10,7 +10,9 @@ import static org.lwjgl.opengl.GL11.GL_FALSE;
 import static org.lwjgl.opengl.GL20.*;
 
 public class GLSLProgram {
-
+	
+	private static GLSLProgram currentProgram;
+	
 	private int id;
 	private Map<String, Integer> uniformLocations = new HashMap<String, Integer>();
 	
@@ -38,6 +40,7 @@ public class GLSLProgram {
 	}
 	
 	private int getUniformLocation(String name) {
+		if(currentProgram != this) use();
 		Integer location = uniformLocations.get(name);
 		if(location == null) {
 			location = glGetUniformLocation(id, name);
@@ -47,6 +50,7 @@ public class GLSLProgram {
 	}
 	
 	public void use() {
+		currentProgram = this;
 		glUseProgram(id);
 	}
 	

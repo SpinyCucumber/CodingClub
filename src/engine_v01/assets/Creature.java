@@ -19,7 +19,14 @@ public class Creature extends Entity {
 		
 	}
 	
+	public interface CreatureAI {
+
+		void getTarget(Creature creature);
+		
+	}
+	
 	protected float health;
+	protected CreatureAI ai;
 	
 	public Creature(World world, Shape shape, Vec2 vector, CreatureType type) {
 		world.super(shape, vector, type);
