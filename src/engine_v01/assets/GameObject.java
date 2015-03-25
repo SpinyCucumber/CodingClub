@@ -25,6 +25,7 @@ public class GameObject extends Thread {
 	private int width, height, time, lastTime;
 	private World world;
 	private GLSLProgram shader;
+	private Framebuffer fbo;
 	
 	public GameObject(int width, int height) {
 		this.width = width;
@@ -50,24 +51,18 @@ public class GameObject extends Thread {
 			Display.setDisplayMode(new DisplayMode(width, height));
 			Display.setVSyncEnabled(true);
 			Display.create();
-			
-			glEnable(GL_BLEND);
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 			glEnable(GL_TEXTURE_2D);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 			glClearColor(0.5f, 0.5f, 1, 1);
 			
 			glMatrixMode(GL_PROJECTION);
+			glLoadIdentity();
 			glOrtho(0, width, height, 0, 1, -1);
 			glMatrixMode(GL_MODELVIEW);
 			
 			shader = new GLSLProgram(GLSLProgram.loadShader(GL_VERTEX_SHADER, "res/shader/lighting.vs"), GLSLProgram.loadShader(GL_FRAGMENT_SHADER, "res/shader/lighting.fs"));
-			shader.use();
-			shader.setUniform("radius", 700);
-			shader.setUniform("resolution", width, height);
 			
-			Framebuffer fbo = new Framebuffer(width, height);
+			fbo = new Framebuffer(width, height);
 			
 			Animation t1 = new TextureAtlas(0, TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/texture/material/sandstone.png")), new Vec2(1, 1)),
 					t2 = new TextureLineup(0.004f, TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/texture/Playable/Knight/Knight_Good.png")), TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/texture/Playable/Knight/Knight_Good_Swing.png")));
@@ -161,6 +156,8 @@ public class GameObject extends Thread {
 			e.printStackTrace();
 		} finally {
 			Display.destroy();
+			shader.delete();
+			fbo.delete();
 			System.exit(1);
 		}
 		

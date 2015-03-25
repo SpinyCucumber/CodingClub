@@ -17,6 +17,10 @@ public class Framebuffer {
 		glBindTexture(GL_TEXTURE_2D, colorBufferId);
 	}
 	
+	public void delete() {
+		glDeleteFramebuffersEXT(id);
+	}
+	
 	public Framebuffer(int width, int height) {
 		
 		id = glGenFramebuffersEXT();                                         // create a new framebuffer
