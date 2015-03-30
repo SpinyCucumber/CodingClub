@@ -1,0 +1,19 @@
+<?xml version="1.0" ?>
+<level>
+	<column1>
+		<tile1>
+			<tile>GROUND</tile></tile1>
+		<tile2>
+			<tile>START</tile></tile2></column1>
+	<column2>
+		<tile1>
+			<tile>GROUND</tile></tile1></column2>
+	<column3>
+		<tile1>
+			<tile>GROUND</tile></tile1></column3>
+	<column4>
+		<tile1>
+			<tile>GROUND</tile></tile1>
+		<tile2>
+			<tile>ENEMY</tile>
+			<mobType>ZOMBIE</mobType></tile2></column4></level>
